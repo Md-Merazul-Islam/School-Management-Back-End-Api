@@ -1,28 +1,20 @@
-from django.contrib.auth.models import User
 from .models import  Profile
 from .serializers import UserSerializer, ProfileSerializer,UserRegistrationSerializer,UserLoginSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.template.loader import render_to_string
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import EmailMultiAlternatives
 from django.contrib.auth import authenticate, login, logout
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.template.loader import render_to_string
 from rest_framework.authtoken.models import Token
-from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import get_user_model
-from rest_framework import generics
 from rest_framework import viewsets
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect, get_object_or_404
-from rest_framework import viewsets,permissions
+from rest_framework import viewsets
 from rest_framework.views import APIView
-from rest_framework.response import Response
 from django.utils.encoding import force_bytes
 from rest_framework import status
 from django.contrib import messages
@@ -82,13 +74,7 @@ def activate(request,uid64, token):
     else:
         return redirect('verified_failed')
     
-from rest_framework import status
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from django.contrib.auth import authenticate, login
-from rest_framework.authtoken.models import Token
-from .serializers import UserLoginSerializer
-from django.contrib.auth.models import User
+
 
 class UserLoginApiView(APIView):
     def post(self, request):

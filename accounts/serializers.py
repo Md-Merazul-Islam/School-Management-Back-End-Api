@@ -1,33 +1,35 @@
 from rest_framework import serializers
 from .models import Profile, User
 
+
+
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
-        fields = '__all__'
+        fields = ['phone_number', 'address', 'date_of_birth', 'department', 'account_no'] 
 
 class UserSerializer(serializers.ModelSerializer):
     profile = ProfileSerializer()
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'is_staff', 'profile','account_no']
+        fields = ['id', 'username', 'email', 'is_staff', 'profile']  
 
-    # def update(self, instance, validated_data):
-    #     profile_data = validated_data.pop('profile', None)
-    #     instance.username = validated_data.get('username', instance.username)
-    #     instance.email = validated_data.get('email', instance.email)
-    #     instance.save()
+    def update(self, instance, validated_data):
+        profile_data = validated_data.pop('profile', None)
+        instance.username = validated_data.get('username', instance.username)
+        instance.email = validated_data.get('email', instance.email)
+        instance.save()
 
-    #     if profile_data:
-    #         profile = instance.profile
-    #         profile.phone_number = profile_data.get('phone_number', profile.phone_number)
-    #         profile.address = profile_data.get('address', profile.address)
-    #         profile.date_of_birth = profile_data.get('date_of_birth', profile.date_of_birth)
-    #         profile.department = profile_data.get('department', profile.department)
-    #         profile.save()
+        if profile_data:
+            profile = instance.profile
+            profile.phone_number = profile_data.get('phone_number', profile.phone_number)
+            profile.address = profile_data.get('address', profile.address)
+            profile.date_of_birth = profile_data.get('date_of_birth', profile.date_of_birth)
+            profile.department = profile_data.get('department', profile.department)
+            profile.save()
 
-    #     return instance
+        return instance
     
     
 class UserRegistrationSerializer(serializers.ModelSerializer):
