@@ -25,6 +25,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.utils.encoding import force_bytes
 from rest_framework import status
+from django.contrib import messages
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
@@ -51,7 +52,7 @@ class UserRegistrationSerializerViewSet(APIView):
             user = serializer.save() 
             token = default_token_generator.make_token(user)
             uid = urlsafe_base64_encode(force_bytes(user.pk))
-            confirm_link = f'http://127.0.0.1:8000/account/active/{uid}{token}/'
+            confirm_link = f'http://127.0.0.1:8000/account/active/{uid}/{token}'
             email_subject = 'Confirm Your Email'
             email_body = render_to_string(
                 'confirm_email.html', {'confirm_link': confirm_link}
@@ -80,34 +81,38 @@ def activate(request,uid64, token):
         return redirect('verified_success')
     else:
         return redirect('verified_failed')
+    
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from django.contrib.auth import authenticate, login
+from rest_framework.authtoken.models import Token
+from .serializers import UserLoginSerializer
+from django.contrib.auth.models import User
 
 class UserLoginApiView(APIView):
     def post(self, request):
-        serializer = UserLoginSerializer(data = self.request.data)
+        serializer = UserLoginSerializer(data=request.data)
         if serializer.is_valid():
-            username = serializer.validated_data['username']
+            username_or_email = serializer.validated_data['username']
             password = serializer.validated_data['password']
-            email = serializer.validated_data['email']
-            user =None
-            if username:
-                user = authenticate(username=username,password=password)
-            elif email:
-                try:
-                    user_obj = User.objects.get(email=email)
-                    user= authenticate(username=user_obj.username, password=password)
-                except User.DoesNotExist:
-                    return Response({'error':'Invalid email'},status=status.HTTP_400_BAD_REQUEST)
-                
-            if user:
+            
+            if "@" in username_or_email:
+                user_obj = User.objects.get(email=username_or_email)
+                user = authenticate(username=user_obj.username, password=password)
+            else:
+                user = user = authenticate(username=username_or_email, password=password)
+          
+            if user is not None and user.is_active:
                 login(request, user)
                 token, _ = Token.objects.get_or_create(user=user)
-                return Response({'token': token.key, 'user_id': user.id}, status=status.HTTP_200_OK)
+                return Response({'message':'successfully login.\n','token': token.key, 'user_id': user.id}, status=status.HTTP_200_OK)
             else:
-                return Response({'error': 'Invalid Credentials'}, status=status.HTTP_401_UNAUTHORIZED)
-            
+                return Response({'error': 'Invalid credentials.'}, status=status.HTTP_401_UNAUTHORIZED)
+        
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-   
-   
+
+
     
 class UserLogoutApiView(APIView):
     permission_classes = [IsAuthenticated]
@@ -116,8 +121,8 @@ class UserLogoutApiView(APIView):
         if request.user.auth_token:
             request.user.auth_token.delete()
         logout(request)
+        messages.success(request, "Successfully logged out.")
         return redirect('login')
-
 
 # email confirm success message
 def successful(request):

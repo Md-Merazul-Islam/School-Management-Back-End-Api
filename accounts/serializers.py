@@ -31,7 +31,7 @@ class UserSerializer(serializers.ModelSerializer):
     
     
 class UserRegistrationSerializer(serializers.ModelSerializer):
-    confirm_password = serializers.CharField(write_only=True)
+    confirm_password = serializers.CharField(required=True)
 
     class Meta:
         model = User
@@ -57,6 +57,15 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         user.set_password(validated_data['password'])  
         user.is_active = False
         user.save()
+        Profile.objects.create(
+            user=user,
+            phone_number=None,
+            address=None,
+            date_of_birth=None,
+            department=None,
+            account_no=int(user.id)+1000,
+            profile_image=None
+        )
         return user
     
     
