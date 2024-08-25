@@ -1,6 +1,15 @@
 http://127.0.0.1:8000/account/register/
 
-
+Admin Panel: http://127.0.0.1:8000/admin/
+REST Framework Authentication: http://127.0.0.1:8000/api-auth/
+Accounts App: http://127.0.0.1:8000/accounts/
+Attendance App: http://127.0.0.1:8000/attendance/
+Classes App: http://127.0.0.1:8000/classes/
+Fees App: http://127.0.0.1:8000/fees/
+Grades App: http://127.0.0.1:8000/grades/
+Reports App: http://127.0.0.1:8000/reports/
+Students App: http://127.0.0.1:8000/students/
+Teachers App: http://127.0.0.1:8000/teachers/
 
 
 
@@ -14,3 +23,10 @@ http://127.0.0.1:8000/account/register/
   "username": "mdmerazul75@gmail.com",
   "password": "meraz2004"
 }
+
+
+find . -path "*/migrations/*.py" -not -name "__init__.py" -delete
+find . -path "*/migrations/*.pyc"  -delete
+rm db.sqlite3
+python manage.py makemigrations
+python manage.py migrate
