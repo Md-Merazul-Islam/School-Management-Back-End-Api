@@ -7,6 +7,8 @@ class AttendanceSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class MarkSerializer(serializers.ModelSerializer):
+    subject_name = serializers.CharField(source='subject.name')
+    
     class Meta:
         model = Mark
-        fields = '__all__'
+        fields = ['subject_name', 'grade', 'marks']

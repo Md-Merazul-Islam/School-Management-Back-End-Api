@@ -1,6 +1,7 @@
 from django.db import models
 from academics.models import Student, Subject
 
+
 class Attendance(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     date = models.DateField()
@@ -30,3 +31,4 @@ class Mark(models.Model):
 
     def __str__(self):
         return f"{self.student} - {self.subject} - {self.grade}"
+
