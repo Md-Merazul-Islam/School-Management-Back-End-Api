@@ -1,7 +1,11 @@
 from rest_framework import viewsets
-from .models import Class
-from .serializers import ClassSerializer
+from .models import Attendance, Mark
+from .serializers import AttendanceSerializer, MarkSerializer
 
-class ClassViewSet(viewsets.ModelViewSet):
-    queryset = Class.objects.all()
-    serializer_class = ClassSerializer
+class AttendanceViewSet(viewsets.ModelViewSet):
+    queryset = Attendance.objects.all()
+    serializer_class = AttendanceSerializer
+
+class MarkViewSet(viewsets.ModelViewSet):
+    queryset = Mark.objects.all()
+    serializer_class = MarkSerializer

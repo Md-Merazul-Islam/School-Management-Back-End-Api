@@ -68,13 +68,9 @@ INSTALLED_APPS = [
     'django_filters',
     'corsheaders',
     'accounts',
-    'attendance',
+    'academics',
     'classes',
-    'fees',
-    'grades',
-    'reports',
-    'students',
-    'teachers',
+
 ]
 
 REST_FRAMEWORK = {
